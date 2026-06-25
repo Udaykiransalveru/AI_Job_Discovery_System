@@ -13,7 +13,4 @@ pymongo
 matplotlib
 plotly
 fpdf
-torch
-torchvision
-torchaudio
-sentence-transformers
+

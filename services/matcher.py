@@ -1,31 +1,23 @@
-from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-model = SentenceTransformer(
-    'all-MiniLM-L6-v2'
-)
 
+def match_jobs(resume_text, jobs_df):
 
-def match_jobs(
-    resume_text,
-    jobs_df
-):
+    descriptions = jobs_df["Description"].fillna("").tolist()
 
-    descriptions = jobs_df[
-        "Description"
-    ].fillna("").tolist()
+    corpus = [resume_text] + descriptions
 
-    resume_embedding = model.encode(
-        [resume_text]
-    )
+    vectorizer = TfidfVectorizer(stop_words="english")
 
-    job_embeddings = model.encode(
-        descriptions
-    )
+    vectors = vectorizer.fit_transform(corpus)
+
+    resume_vector = vectors[0]
+    job_vectors = vectors[1:]
 
     similarity = cosine_similarity(
-        resume_embedding,
-        job_embeddings
+        resume_vector,
+        job_vectors
     ).flatten()
 
     jobs_df["Match_Score"] = similarity
